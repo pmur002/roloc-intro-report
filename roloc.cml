@@ -28,6 +28,7 @@
     <a href="http://orcid.org"><img alt="" src="https://www.stat.auckland.ac.nz/~paul/ORCID/ORCiD.png" style="width: 16px; height: 16px; vertical-align: middle" /></a> <span style="font-family: mono; font-size: small"><a href="http://orcid.org/0000-0002-3224-8858">http://orcid.org/0000-0002-3224-8858</a></span>
   </p>
   <p class="date">
+    Version 1:
     <rcode echo="FALSE" results="asis">
 cat(format(Sys.Date(), "%A %d %B %Y"))
     </rcode>
@@ -578,6 +579,10 @@ colourName(c("aliceblue", "lemonchiffon"), colourList=HTMLcolours)
 
   <h2><a name="Resources">Resources</a></h2>
   <ul>
+    <li>
+      All materials required to (re)create this document are available
+      on <a href="https://github.com/pmur002/roloc-intro-report/releases/tag/v1">github</a>.
+    </li>
     <li>
       The <a href="roloc.cml">raw source file</a> for this
       report, a <a href="roloc.xml">valid XML</a>
