@@ -91,22 +91,25 @@ options(width=100)
           <a href="#plots">5. Visualising colour names</a>
         </li>
         <li>
-          <a href="#summary">6. Discussion</a>
+          <a href="#detail">6. Under the hood</a>
         </li>
         <li>
-          <a href="#related">7. Related work</a>
+          <a href="#summary">7. Discussion</a>
         </li>
         <li>
-          <a href="#summary">8. Summary</a>
+          <a href="#related">8. Related work</a>
         </li>
         <li>
-          <a href="#requirements">9. Technical requirements</a>
+          <a href="#summary">9. Summary</a>
         </li>
         <li>
-          <a href="#Resources">10. Resources</a>
+          <a href="#requirements">10. Technical requirements</a>
         </li>
         <li>
-          <a href="#references">11. References</a>
+          <a href="#Resources">11. Resources</a>
+        </li>
+        <li>
+          <a href="#references">12. References</a>
         </li>
       </ul>
     </div>
@@ -135,7 +138,7 @@ mtsmall$numgears <- as.factor(mtsmall$gear)
   </p>
     <!--begin.rcode 
 g <- ggplot(mtsmall) + 
-    geom_point(aes(x=disp, y=mpg), size=10)
+    geom_point(aes(x=disp, y=mpg), size=5)
   end.rcode-->
     <p>
     Printing the object <code>g</code> draws the plot ...
@@ -159,7 +162,7 @@ VI(g)
   </p>
     <!--begin.rcode fig.width=6, fig.height=4.5
 g <- ggplot(mtsmall) + 
-    geom_point(aes(x=disp, y=mpg, colour=numgears), size=10)
+    geom_point(aes(x=disp, y=mpg, colour=numgears), size=5)
 g
 VI(g)
   end.rcode-->
@@ -497,8 +500,22 @@ colourName(c("#00FF00", "#00BFC4", "#F0F8FF"),
            colourList=HTMLcolours, tolerance=0)
   end.rcode-->
     <p>
-    TODO: numMatches argument too ?
+    There is also a <code>colourNames</code> function, which can return
+    more than one name for each colour (ordered by increasing distance).   
+    Using the <code>euclideanLUV</code> metric and infinite tolerance,
+    this will return all colours in the colour list ...
   </p>
+    <!--begin.rcode 
+colourNames(c("#00FF00", "#00BFC4", "#F0F8FF"), 
+            colourList=HTMLcolours)
+  end.rcode-->
+    <p>
+    ... or a lower tolerance can be specified to get just "nearby" colours ...
+  </p>
+    <!--begin.rcode 
+colourNames(c("#00FF00", "#00BFC4", "#F0F8FF"), 
+            colourList=HTMLcolours, tolerance=40)
+  end.rcode-->
     <h2>
       <a name="plots">5. Visualising colour names</a>
     </h2>
@@ -508,13 +525,36 @@ colourName(c("#00FF00", "#00BFC4", "#F0F8FF"),
     to be matched, and a small rectangle of that colour,
     alongside the matched colour name, and a small rectangle of that colour.
   </p>
-    <!--begin.rcode fig.height=.5, message=FALSE
-colourSwatch("#F11300")
-colourSwatch("#F11300", colourList=HTMLcolours)
-colourSwatch("#F11300", colourMetric=euclideanRGB)
+    <!--begin.rcode fig.height=1, message=FALSE
+colourSwatch(c("#00FF00", "#00BFC4", "#F0F8FF"))
+colourSwatch(c("#00FF00", "#00BFC4", "#F0F8FF"), 
+           colourList=HTMLcolours)
+colourSwatch(c("#00FF00", "#00BFC4", "#F0F8FF"), 
+           colourList=shades, colourMetric=lightnessLUV)
+  end.rcode-->
+    <p>
+    The <code>colourSwatches</code> function shows more than one match.
+  </p>
+    <!--begin.rcode fig.height=1.5, message=FALSE
+colourSwatches(c("#00FF00", "#00BFC4", "#F0F8FF"), 
+               tolerance=5)
+colourSwatches(c("#00FF00", "#00BFC4", "#F0F8FF"), 
+               colourList=HTMLcolours, tolerance=40)
   end.rcode-->
     <h2>
-      <a name="summary">6. Discussion</a>
+      <a name="detail">6. Under the hood</a>
+    </h2>
+    <p>
+    The lower-level <code>colourMatch</code> function generates
+    a "colourMatch" object, which contains all of the information
+    about the comparison of test colour with the colour list.
+  </p>
+    <!--begin.rcode 
+colourMatch(c("#00FF00", "#00BFC4", "#F0F8FF"),
+            colourList=shades, colourMetric=lightnessLUV)
+  end.rcode-->
+    <h2>
+      <a name="summary">7. Discussion</a>
     </h2>
     <p>
     The initial motivation for developing 'roloc' was to provide a
@@ -534,9 +574,11 @@ colourSwatch("#F8766D")
     inscrutable (e.g., "aliceblue" or "lemonchiffon").  Use of
     a different (simpler) colour list might provide a translation
     of these more exotic names into more familiar terminology.
+    The <code>simpleColours</code> list is one of my own construction,
+    made by evenly descriptive labels throughout CIE Luv space.
   </p>
     <!--begin.rcode 
-colourName(c("aliceblue", "lemonchiffon"), colourList=HTMLcolours)
+colourName(c("aliceblue", "lemonchiffon"), colourList=simpleColours)
   end.rcode-->
     <p>
     A small assistance for 'BrailleR' ?
@@ -559,17 +601,47 @@ colourName(c("aliceblue", "lemonchiffon"), colourList=HTMLcolours)
     Also demo an xkcd colour names list ?
   </p>
     <h2>
-      <a name="related">7. Related work</a>
+      <a name="related">8. Related work</a>
     </h2>
     <p>
+    There are many R packages that deal with colour, but none to my
+    knowledge that deals directly with the problem of converting colour
+    specifications to colour names.
+    The 'roloc' package builds on the 
+    'colorspace' package 
+    for representing colour specifications in different colour spaces
+    and transforming between colour spaces.
+    Numerous packages provide functions
+    for generating colour palettes, for example,
+    'RColorBrewer' and 'pals'.
+    The 'colorscience' package contains a large number of colour resources
+    including colour space conversions, and colour metrics.
+  </p>
+    <p>
+    Outside of R, there are a number of web sites that provide
+    conversions from colour specifications to colour names, for example,
+    http://shallowsky.com/colormatch/index.php,
+    which includes links to its PHP source code
+    http://shallowsky.com/colormatch/colormatch.php.txt
+
+    There are also standalone programs like 
+    https://www.codeproject.com/Articles/243610/The-Known-Colors-Palette-Tool-Revised
+    and there are numerous mobile phone apps, such as
+    Color Grab (loomatix),
+    ColourMatch (Resene),
+    and Color ID (GreenGar).
+
+    However, all of these lack the flexibility and/or programmability
+    of a general software package and, of course, cannot be easily used
+    from R.
+  </p>
+    <!--
     Online colour name generators.
     Make sure that no other R package exists !
     'colordistance' package (for working with colours in pixel images,
     but includes colour metric tools)
     'colorscience' package (including colour matching functions, including
     deltaE2000() function ! [and others])
-    'aqp' has rgb2munsell() and munsell2rgb() (latter does its own conversions;
-    former just uses euclidean distance in RGB to get closest match)
     The World Color Survey (http://www1.icsi.berkeley.edu/wcs/)
     has a lot of data.
     There are some Julia "packages" for converting between colour names
@@ -581,9 +653,9 @@ colourName(c("aliceblue", "lemonchiffon"), colourList=HTMLcolours)
     Brand Fortner, "Number by Color", Part 5, SciTech Journal 6, p32, May/June 1996. 
     ... but noone could find a copy
     MObile phone colour apps
-  </p>
+-->
     <h2>
-      <a name="summary">8. Summary</a>
+      <a name="summary">9. Summary</a>
     </h2>
     <p>
     The 'roloc' package provides tools for converting colour specifications
@@ -592,7 +664,7 @@ colourName(c("aliceblue", "lemonchiffon"), colourList=HTMLcolours)
     and a metric function to determine the closest colour.
   </p>
     <h2>
-      <a name="requirements">9. Technical requirements</a>
+      <a name="requirements">10. Technical requirements</a>
     </h2>
     <p>
     The examples and discussion in this document relate to <a href="https://github.com/pmur002/roloc/releases/tag/v0.1">version
@@ -605,7 +677,7 @@ colourName(c("aliceblue", "lemonchiffon"), colourList=HTMLcolours)
     (see <a href="#Resources">Resources</a> section below).
   </p>
     <h2>
-      <a name="Resources">10. Resources</a>
+      <a name="Resources">11. Resources</a>
     </h2>
     <ul>
       <li>
@@ -647,7 +719,7 @@ colourName(c("aliceblue", "lemonchiffon"), colourList=HTMLcolours)
     [ <a href="how-to-cite.bib">bib</a> ] 
   </p>
     <h2>
-      <a name="references">11. References</a>
+      <a name="references">12. References</a>
     </h2>
     <dl>
 <dt>

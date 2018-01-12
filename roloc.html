@@ -146,22 +146,25 @@ Friday 12 January 2018
           <a href="#plots">5. Visualising colour names</a>
         </li>
         <li>
-          <a href="#summary">6. Discussion</a>
+          <a href="#detail">6. Under the hood</a>
         </li>
         <li>
-          <a href="#related">7. Related work</a>
+          <a href="#summary">7. Discussion</a>
         </li>
         <li>
-          <a href="#summary">8. Summary</a>
+          <a href="#related">8. Related work</a>
         </li>
         <li>
-          <a href="#requirements">9. Technical requirements</a>
+          <a href="#summary">9. Summary</a>
         </li>
         <li>
-          <a href="#Resources">10. Resources</a>
+          <a href="#requirements">10. Technical requirements</a>
         </li>
         <li>
-          <a href="#references">11. References</a>
+          <a href="#Resources">11. Resources</a>
+        </li>
+        <li>
+          <a href="#references">12. References</a>
         </li>
       </ul>
     </div>
@@ -189,7 +192,7 @@ Friday 12 January 2018
     Now we produce a "ggplot" object that describes a plot of these data.
   </p>
 <div class="chunk" id="unnamed-chunk-4"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">g</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">ggplot</span><span class="hl std">(mtsmall)</span> <span class="hl opt">+</span>
-<span class="hl kwd">geom_point</span><span class="hl std">(</span><span class="hl kwd">aes</span><span class="hl std">(</span><span class="hl kwc">x</span><span class="hl std">=disp,</span> <span class="hl kwc">y</span><span class="hl std">=mpg),</span> <span class="hl kwc">size</span><span class="hl std">=</span><span class="hl num">10</span><span class="hl std">)</span>
+<span class="hl kwd">geom_point</span><span class="hl std">(</span><span class="hl kwd">aes</span><span class="hl std">(</span><span class="hl kwc">x</span><span class="hl std">=disp,</span> <span class="hl kwc">y</span><span class="hl std">=mpg),</span> <span class="hl kwc">size</span><span class="hl std">=</span><span class="hl num">5</span><span class="hl std">)</span>
 </pre></div>
 </div></div>
     <p>
@@ -215,7 +218,7 @@ Friday 12 January 2018
   (108, 22.8), 
   (258, 21.4) and 
   (360, 18.7)
-  The chart has size set to 10.
+  The chart has size set to 5.
 </pre></div>
 </div></div>
     <p>
@@ -225,7 +228,7 @@ Friday 12 January 2018
     but with points from different groups drawn with different colours.
   </p>
 <div class="chunk" id="unnamed-chunk-7"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">g</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">ggplot</span><span class="hl std">(mtsmall)</span> <span class="hl opt">+</span>
-<span class="hl kwd">geom_point</span><span class="hl std">(</span><span class="hl kwd">aes</span><span class="hl std">(</span><span class="hl kwc">x</span><span class="hl std">=disp,</span> <span class="hl kwc">y</span><span class="hl std">=mpg,</span> <span class="hl kwc">colour</span><span class="hl std">=numgears),</span> <span class="hl kwc">size</span><span class="hl std">=</span><span class="hl num">10</span><span class="hl std">)</span>
+<span class="hl kwd">geom_point</span><span class="hl std">(</span><span class="hl kwd">aes</span><span class="hl std">(</span><span class="hl kwc">x</span><span class="hl std">=disp,</span> <span class="hl kwc">y</span><span class="hl std">=mpg,</span> <span class="hl kwc">colour</span><span class="hl std">=numgears),</span> <span class="hl kwc">size</span><span class="hl std">=</span><span class="hl num">5</span><span class="hl std">)</span>
 <span class="hl std">g</span>
 </pre></div>
 </div><div class="rimage default"><img src="figure/unnamed-chunk-7-1.png" title="plot of chunk unnamed-chunk-7" alt="plot of chunk unnamed-chunk-7" class="plot" /></div><div class="rcode">
@@ -244,7 +247,7 @@ Friday 12 January 2018
   (108, 22.8) colour #00BFC4 which maps to numgears = 4, 
   (258, 21.4) colour #F8766D which maps to numgears = 3 and 
   (360, 18.7) colour #F8766D which maps to numgears = 3
-  The chart has size set to 10.
+  The chart has size set to 5.
 </pre></div>
 </div></div>
     <p>
@@ -626,8 +629,43 @@ Friday 12 January 2018
 </pre></div>
 </div></div>
     <p>
-    TODO: numMatches argument too ?
+    There is also a <code>colourNames</code> function, which can return
+    more than one name for each colour (ordered by increasing distance).   
+    Using the <code>euclideanLUV</code> metric and infinite tolerance,
+    this will return all colours in the colour list ...
   </p>
+<div class="chunk" id="unnamed-chunk-30"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">colourNames</span><span class="hl std">(</span><span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;#00FF00&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;#00BFC4&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;#F0F8FF&quot;</span><span class="hl std">),</span>
+        <span class="hl kwc">colourList</span><span class="hl std">=HTMLcolours)</span>
+</pre></div>
+<div class="output"><pre class="knitr r">  [[1]]
+   [1] &quot;lime&quot;    &quot;green&quot;   &quot;yellow&quot;  &quot;olive&quot;   &quot;aqua&quot;    &quot;teal&quot;    &quot;silver&quot;  &quot;white&quot;   &quot;gray&quot;   
+  [10] &quot;black&quot;   &quot;navy&quot;    &quot;maroon&quot;  &quot;purple&quot;  &quot;blue&quot;    &quot;red&quot;     &quot;fuschia&quot;
+  
+  [[2]]
+   [1] &quot;aqua&quot;    &quot;teal&quot;    &quot;silver&quot;  &quot;gray&quot;    &quot;white&quot;   &quot;green&quot;   &quot;navy&quot;    &quot;black&quot;   &quot;olive&quot;  
+  [10] &quot;purple&quot;  &quot;lime&quot;    &quot;blue&quot;    &quot;yellow&quot;  &quot;maroon&quot;  &quot;fuschia&quot; &quot;red&quot;    
+  
+  [[3]]
+   [1] &quot;white&quot;   &quot;silver&quot;  &quot;gray&quot;    &quot;teal&quot;    &quot;aqua&quot;    &quot;olive&quot;   &quot;green&quot;   &quot;purple&quot;  &quot;navy&quot;   
+  [10] &quot;black&quot;   &quot;yellow&quot;  &quot;maroon&quot;  &quot;lime&quot;    &quot;blue&quot;    &quot;fuschia&quot; &quot;red&quot;
+</pre></div>
+</div></div>
+    <p>
+    ... or a lower tolerance can be specified to get just "nearby" colours ...
+  </p>
+<div class="chunk" id="unnamed-chunk-31"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">colourNames</span><span class="hl std">(</span><span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;#00FF00&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;#00BFC4&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;#F0F8FF&quot;</span><span class="hl std">),</span>
+        <span class="hl kwc">colourList</span><span class="hl std">=HTMLcolours,</span> <span class="hl kwc">tolerance</span><span class="hl std">=</span><span class="hl num">40</span><span class="hl std">)</span>
+</pre></div>
+<div class="output"><pre class="knitr r">  [[1]]
+  [1] &quot;lime&quot;
+  
+  [[2]]
+  [1] &quot;aqua&quot; &quot;teal&quot;
+  
+  [[3]]
+  [1] &quot;white&quot;  &quot;silver&quot;
+</pre></div>
+</div></div>
     <h2>
       <a name="plots">5. Visualising colour names</a>
     </h2>
@@ -637,17 +675,67 @@ Friday 12 January 2018
     to be matched, and a small rectangle of that colour,
     alongside the matched colour name, and a small rectangle of that colour.
   </p>
-<div class="chunk" id="unnamed-chunk-30"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">colourSwatch</span><span class="hl std">(</span><span class="hl str">&quot;#F11300&quot;</span><span class="hl std">)</span>
+<div class="chunk" id="unnamed-chunk-32"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">colourSwatch</span><span class="hl std">(</span><span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;#00FF00&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;#00BFC4&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;#F0F8FF&quot;</span><span class="hl std">))</span>
 </pre></div>
-</div><div class="rimage default"><img src="figure/unnamed-chunk-30-1.png" title="plot of chunk unnamed-chunk-30" alt="plot of chunk unnamed-chunk-30" class="plot" /></div><div class="rcode">
-<div class="source"><pre class="knitr r"><span class="hl kwd">colourSwatch</span><span class="hl std">(</span><span class="hl str">&quot;#F11300&quot;</span><span class="hl std">,</span> <span class="hl kwc">colourList</span><span class="hl std">=HTMLcolours)</span>
+</div><div class="rimage default"><img src="figure/unnamed-chunk-32-1.png" title="plot of chunk unnamed-chunk-32" alt="plot of chunk unnamed-chunk-32" class="plot" /></div><div class="rcode">
+<div class="source"><pre class="knitr r"><span class="hl kwd">colourSwatch</span><span class="hl std">(</span><span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;#00FF00&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;#00BFC4&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;#F0F8FF&quot;</span><span class="hl std">),</span>
+       <span class="hl kwc">colourList</span><span class="hl std">=HTMLcolours)</span>
 </pre></div>
-</div><div class="rimage default"><img src="figure/unnamed-chunk-30-2.png" title="plot of chunk unnamed-chunk-30" alt="plot of chunk unnamed-chunk-30" class="plot" /></div><div class="rcode">
-<div class="source"><pre class="knitr r"><span class="hl kwd">colourSwatch</span><span class="hl std">(</span><span class="hl str">&quot;#F11300&quot;</span><span class="hl std">,</span> <span class="hl kwc">colourMetric</span><span class="hl std">=euclideanRGB)</span>
+</div><div class="rimage default"><img src="figure/unnamed-chunk-32-2.png" title="plot of chunk unnamed-chunk-32" alt="plot of chunk unnamed-chunk-32" class="plot" /></div><div class="rcode">
+<div class="source"><pre class="knitr r"><span class="hl kwd">colourSwatch</span><span class="hl std">(</span><span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;#00FF00&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;#00BFC4&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;#F0F8FF&quot;</span><span class="hl std">),</span>
+       <span class="hl kwc">colourList</span><span class="hl std">=shades,</span> <span class="hl kwc">colourMetric</span><span class="hl std">=lightnessLUV)</span>
 </pre></div>
-</div><div class="rimage default"><img src="figure/unnamed-chunk-30-3.png" title="plot of chunk unnamed-chunk-30" alt="plot of chunk unnamed-chunk-30" class="plot" /></div></div>
+</div><div class="rimage default"><img src="figure/unnamed-chunk-32-3.png" title="plot of chunk unnamed-chunk-32" alt="plot of chunk unnamed-chunk-32" class="plot" /></div></div>
+    <p>
+    The <code>colourSwatches</code> function shows more than one match.
+  </p>
+<div class="chunk" id="unnamed-chunk-33"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">colourSwatches</span><span class="hl std">(</span><span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;#00FF00&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;#00BFC4&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;#F0F8FF&quot;</span><span class="hl std">),</span>
+           <span class="hl kwc">tolerance</span><span class="hl std">=</span><span class="hl num">5</span><span class="hl std">)</span>
+</pre></div>
+</div><div class="rimage default"><img src="figure/unnamed-chunk-33-1.png" title="plot of chunk unnamed-chunk-33" alt="plot of chunk unnamed-chunk-33" class="plot" /></div><div class="rcode">
+<div class="source"><pre class="knitr r"><span class="hl kwd">colourSwatches</span><span class="hl std">(</span><span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;#00FF00&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;#00BFC4&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;#F0F8FF&quot;</span><span class="hl std">),</span>
+           <span class="hl kwc">colourList</span><span class="hl std">=HTMLcolours,</span> <span class="hl kwc">tolerance</span><span class="hl std">=</span><span class="hl num">40</span><span class="hl std">)</span>
+</pre></div>
+</div><div class="rimage default"><img src="figure/unnamed-chunk-33-2.png" title="plot of chunk unnamed-chunk-33" alt="plot of chunk unnamed-chunk-33" class="plot" /></div></div>
     <h2>
-      <a name="summary">6. Discussion</a>
+      <a name="detail">6. Under the hood</a>
+    </h2>
+    <p>
+    The lower-level <code>colourMatch</code> function generates
+    a "colourMatch" object, which contains all of the information
+    about the comparison of test colour with the colour list.
+  </p>
+<div class="chunk" id="unnamed-chunk-34"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">colourMatch</span><span class="hl std">(</span><span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;#00FF00&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;#00BFC4&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;#F0F8FF&quot;</span><span class="hl std">),</span>
+        <span class="hl kwc">colourList</span><span class="hl std">=shades,</span> <span class="hl kwc">colourMetric</span><span class="hl std">=lightnessLUV)</span>
+</pre></div>
+<div class="output"><pre class="knitr r">  $colour
+  [1] &quot;#00FF00&quot; &quot;#00BFC4&quot; &quot;#F0F8FF&quot;
+  
+  $colourList
+  $names
+  [1] &quot;light&quot;  &quot;medium&quot; &quot;dark&quot;  
+  
+  $colours
+               R         G         B
+  [1,] 1.0000036 0.9999959 1.0000355
+  [2,] 0.4663284 0.4663246 0.4663441
+  [3,] 0.0000000 0.0000000 0.0000000
+  
+  attr(,&quot;class&quot;)
+  [1] &quot;colourList&quot;
+  
+  $colourDist
+            [,1]     [,2]     [,3]
+  [1,] 12.264935 37.73508 87.73510
+  [2,] 29.653967 20.34605 70.34607
+  [3,]  2.821398 47.17862 97.17864
+  
+  attr(,&quot;class&quot;)
+  [1] &quot;colourMatch&quot;
+</pre></div>
+</div></div>
+    <h2>
+      <a name="summary">7. Discussion</a>
     </h2>
     <p>
     The initial motivation for developing 'roloc' was to provide a
@@ -658,22 +746,24 @@ Friday 12 January 2018
     who encounters a hexadecimal colour specification may find it useful
     to interactively query a colour specification, as shown below. 
   </p>
-<div class="chunk" id="unnamed-chunk-31"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">colourName</span><span class="hl std">(</span><span class="hl str">&quot;#F8766D&quot;</span><span class="hl std">)</span>
+<div class="chunk" id="unnamed-chunk-35"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">colourName</span><span class="hl std">(</span><span class="hl str">&quot;#F8766D&quot;</span><span class="hl std">)</span>
 </pre></div>
 <div class="output"><pre class="knitr r">  [1] &quot;salmon&quot;
 </pre></div>
 <div class="source"><pre class="knitr r"><span class="hl kwd">colourSwatch</span><span class="hl std">(</span><span class="hl str">&quot;#F8766D&quot;</span><span class="hl std">)</span>
 </pre></div>
-</div><div class="rimage default"><img src="figure/unnamed-chunk-31-1.png" title="plot of chunk unnamed-chunk-31" alt="plot of chunk unnamed-chunk-31" class="plot" /></div></div>
+</div><div class="rimage default"><img src="figure/unnamed-chunk-35-1.png" title="plot of chunk unnamed-chunk-35" alt="plot of chunk unnamed-chunk-35" class="plot" /></div></div>
     <p>
     Another possibility is that some colour names themselves are
     inscrutable (e.g., "aliceblue" or "lemonchiffon").  Use of
     a different (simpler) colour list might provide a translation
     of these more exotic names into more familiar terminology.
+    The <code>simpleColours</code> list is one of my own construction,
+    made by evenly descriptive labels throughout CIE Luv space.
   </p>
-<div class="chunk" id="unnamed-chunk-32"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">colourName</span><span class="hl std">(</span><span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;aliceblue&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;lemonchiffon&quot;</span><span class="hl std">),</span> <span class="hl kwc">colourList</span><span class="hl std">=HTMLcolours)</span>
+<div class="chunk" id="unnamed-chunk-36"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">colourName</span><span class="hl std">(</span><span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;aliceblue&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;lemonchiffon&quot;</span><span class="hl std">),</span> <span class="hl kwc">colourList</span><span class="hl std">=simpleColours)</span>
 </pre></div>
-<div class="output"><pre class="knitr r">  [1] &quot;white&quot; &quot;white&quot;
+<div class="output"><pre class="knitr r">  [1] &quot;greyish very light blue&quot; &quot;dull very light yellow&quot;
 </pre></div>
 </div></div>
     <p>
@@ -697,17 +787,47 @@ Friday 12 January 2018
     Also demo an xkcd colour names list ?
   </p>
     <h2>
-      <a name="related">7. Related work</a>
+      <a name="related">8. Related work</a>
     </h2>
     <p>
+    There are many R packages that deal with colour, but none to my
+    knowledge that deals directly with the problem of converting colour
+    specifications to colour names.
+    The 'roloc' package builds on the 
+    'colorspace' package 
+    for representing colour specifications in different colour spaces
+    and transforming between colour spaces.
+    Numerous packages provide functions
+    for generating colour palettes, for example,
+    'RColorBrewer' and 'pals'.
+    The 'colorscience' package contains a large number of colour resources
+    including colour space conversions, and colour metrics.
+  </p>
+    <p>
+    Outside of R, there are a number of web sites that provide
+    conversions from colour specifications to colour names, for example,
+    http://shallowsky.com/colormatch/index.php,
+    which includes links to its PHP source code
+    http://shallowsky.com/colormatch/colormatch.php.txt
+
+    There are also standalone programs like 
+    https://www.codeproject.com/Articles/243610/The-Known-Colors-Palette-Tool-Revised
+    and there are numerous mobile phone apps, such as
+    Color Grab (loomatix),
+    ColourMatch (Resene),
+    and Color ID (GreenGar).
+
+    However, all of these lack the flexibility and/or programmability
+    of a general software package and, of course, cannot be easily used
+    from R.
+  </p>
+    <!--
     Online colour name generators.
     Make sure that no other R package exists !
     'colordistance' package (for working with colours in pixel images,
     but includes colour metric tools)
     'colorscience' package (including colour matching functions, including
     deltaE2000() function ! [and others])
-    'aqp' has rgb2munsell() and munsell2rgb() (latter does its own conversions;
-    former just uses euclidean distance in RGB to get closest match)
     The World Color Survey (http://www1.icsi.berkeley.edu/wcs/)
     has a lot of data.
     There are some Julia "packages" for converting between colour names
@@ -719,9 +839,9 @@ Friday 12 January 2018
     Brand Fortner, "Number by Color", Part 5, SciTech Journal 6, p32, May/June 1996. 
     ... but noone could find a copy
     MObile phone colour apps
-  </p>
+-->
     <h2>
-      <a name="summary">8. Summary</a>
+      <a name="summary">9. Summary</a>
     </h2>
     <p>
     The 'roloc' package provides tools for converting colour specifications
@@ -730,7 +850,7 @@ Friday 12 January 2018
     and a metric function to determine the closest colour.
   </p>
     <h2>
-      <a name="requirements">9. Technical requirements</a>
+      <a name="requirements">10. Technical requirements</a>
     </h2>
     <p>
     The examples and discussion in this document relate to <a href="https://github.com/pmur002/roloc/releases/tag/v0.1">version
@@ -743,7 +863,7 @@ Friday 12 January 2018
     (see <a href="#Resources">Resources</a> section below).
   </p>
     <h2>
-      <a name="Resources">10. Resources</a>
+      <a name="Resources">11. Resources</a>
     </h2>
     <ul>
       <li>
@@ -785,7 +905,7 @@ Friday 12 January 2018
     [ <a href="how-to-cite.bib">bib</a> ] 
   </p>
     <h2>
-      <a name="references">11. References</a>
+      <a name="references">12. References</a>
     </h2>
     <dl>
 <dt>
