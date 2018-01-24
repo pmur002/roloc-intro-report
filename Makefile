@@ -20,7 +20,7 @@ docker:
 
 web:
 	make docker
-	cp -r ../roloc ~/Web/Reports/roloc/intro
+	cp -r ../roloc-intro-report ~/Web/Reports/roloc/intro
 
 zip:
 	make docker

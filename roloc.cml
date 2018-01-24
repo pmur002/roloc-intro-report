@@ -156,7 +156,8 @@ colspec <- str_match(result$text[9], "#[0-9A-Z]+")
     The purpose of the 'roloc' package is to provide a framework for converting
     this sort of colour description into a more understandable colour
     name.  For example, the following code shows the result
-    of calling the <code>colourName</code> function on this colour
+    of calling the <code>colourName</code> function from the 'roloc' 
+    package on this colour
     description.
   </p>
   <rcode>
@@ -182,7 +183,7 @@ gsub(colspec, colourName(colspec[1]), result$text[9])
       How the original colour is specified.
     </li>
     <li>
-      What colour names we are allowed to convert to.
+      Which list of colour names to choose from.
     </li>
     <li>
       How to map a colour specification to a colour name.
@@ -323,7 +324,7 @@ colourName("#F0F8FF")
   <p>
     That list of colour names is based on a semi-standard set of
     "X11" colour names (<a href="#color-dictionaries"/>),
-    which is also used in SVG (<a href="#SVG-colors"/>) 
+    which is very similar to what is used in SVG (<a href="#SVG-colors"/>) 
     and CSS3 (<a href="#CSS-colors"/>).
     A much smaller standard set of colour names is the 
     "HTML" colour names (<a href="#HTML-colors"/>), 
@@ -331,26 +332,29 @@ colourName("#F0F8FF")
     This set can be used by specifying the <code>colourList</code>
     argument to the <code>colourName</code> function.
     The code below shows that, for the same colour specification, 
-    different colour lists may give different colour names.
+    different colour lists will sometimes give different colour names.
   </p>
   <rcode>
 colourName("#00FF00")
 colourName("#00FF00", colourList=HTMLcolours)
   </rcode>
   <p>
-    It is also possible to create a custom list of colour names
+    It is also possible to create a new list of colour names
     with the <code>colourList</code> function.  This function
     takes two arguments:  a character vector of colour names;
     and an "sRGB" colour object as produced by 
-    functions in the 'colorspace' package (with one sRGB colour
-    specification per colour name).  
+    functions in the 'colorspace' package 
+    (<a href="#colorspace-pkg"/>, 
+    <a href="#colorspace"/>), with one sRGB colour
+    specification per colour name.  
     The following code
     provides a simple example, where the colour list is a set of 
     colour names that correspond to colours that only differ in terms
     of lightness.  In this example, the colours are first created 
-    in the CIE LUV colour space with the <code>polarLUV</code> function,
+    in the CIE LUV colour space (<a href="#cieluv"/>)
+    with the <code>polarLUV</code> function,
     so that we can easily control lightness,
-    then converted to "sRGB" colours.
+    then converted to sRGB colours (<a href="#srgb"/>).
   </p>
   <rcode message="FALSE">
 library(colorspace)
@@ -416,7 +420,7 @@ colourName("#F12300", colourMetric=euclideanRGB)
   </p>
   <p>
     The code below shows an example of a custom colour metric.  This metric
-    works in the CIE Luv colour space, but only considers the lightness
+    works in the CIE LUV colour space, but only considers the lightness
     component of the colours when determining a match.
   </p>
   <rcode>
@@ -458,7 +462,7 @@ colourName(c("#00FF00", "#00BFC4", "#F0F8FF"),
     the nearest colour name on the colour list is greater than the 
     tolerance then the distance <code>Inf</code> is returned for that
     comparison.  In 
-    the code below, we first returns nearest matches, then we specify
+    the code below, we first return nearest matches, then we specify
     a tolerance of zero so that 
     only exact colour matches are returned (based on the
     HTML colour list).
@@ -473,7 +477,8 @@ colourName(c("#00FF00", "#00BFC4", "#F0F8FF"),
     There is also a <code>colourNames</code> function, which can return
     more than one name for each colour (ordered by increasing distance).   
     Using the <code>euclideanLUV</code> metric and infinite tolerance,
-    this will return all colours in the colour list ...
+    this will return all colours in the colour list for each 
+    colour match (ordered by increasing distance) ...
   </p>
   <rcode>
 colourNames(c("#00FF00", "#00BFC4", "#F0F8FF"), 
@@ -495,6 +500,8 @@ colourNames(c("#00FF00", "#00BFC4", "#F0F8FF"),
     This consists of the colour specification 
     to be matched, and a small rectangle of that colour,
     alongside the matched colour name, and a small rectangle of that colour.
+    This provides some visual feedback on how closely the colour 
+    specification matches the colour name.
   </p>
 
   <rcode fig.height="1" message="FALSE">
@@ -518,9 +525,9 @@ colourSwatches(c("#00FF00", "#00BFC4", "#F0F8FF"),
 
   <h2><a name="detail">Under the hood</a></h2>
   <p>
-    Underlying both <code>colourName</code> and 
+    Underlying both of the <code>colourName</code> and 
     <code>colourSwatch</code> functions is a
-    lower-level <code>colourMatch</code> function.  This generates
+    lower-level function called <code>colourMatch</code>.  This generates
     a "colourMatch" object, which contains all of the information
     about the comparison of colour specifications with the colour list
     and may provide a basis for further calculations on the colour comparison
@@ -587,7 +594,7 @@ colourSwatches(rgb(unique(coords(NgaTae$colours))), colourList=NgaTae, tolerance
     contains a large number of colour resources
     including colour space conversions, and colour metrics.
     The 'roloc' package builds on the 
-    'colorspace' package (<a href="#colorspace-pkg"/>)
+    'colorspace' package 
     for representing colour specifications in different colour spaces
     and transforming between colour spaces.
   </p>
@@ -658,7 +665,11 @@ colourSwatches(rgb(unique(coords(NgaTae$colours))), colourList=NgaTae, tolerance
       report, a <a href="roloc.xml">valid XML</a>
       transformation of the source file, a <a
       href="roloc.Rhtml">'knitr' document</a> generated from
-      the XML file, two <a href="common.xsl">XSL</a> <a
+      the XML file, 
+      two <a href="toc.R">R</a> <a href="bib.R">files</a> and
+      the <a href="roloc.bib">bibtex file</a>
+      that are used to generate the table of contents and reference sections,
+      two <a href="common.xsl">XSL</a> <a
       href="knitr.xsl">files</a> that are used to transform the XML to
       the 'knitr' document, and a <a href="Makefile">Makefile</a> that
       contains code for the other transformations and coordinates
@@ -689,7 +700,7 @@ colourSwatches(rgb(unique(coords(NgaTae$colours))), colourList=NgaTae, tolerance
   <h2>How to cite this document</h2>
   <p>
     Murrell, P. (2018). "Generating Colour Names: The 'roloc' Package for R." 
-    Technical Report 2018-??, University of Auckland. 
+    Technical Report 2018-01, Department of Statistics, The University of Auckland. 
     [ <a href="how-to-cite.bib">bib</a> ] 
   </p>
 
@@ -717,7 +728,13 @@ colourSwatches(rgb(unique(coords(NgaTae$colours))), colourList=NgaTae, tolerance
       <a name="HTML-colors"></a>
     </li>
     <li>
+      <a name="XKCD-colors"></a>
+    </li>
+    <li>
       <a name="pals-pkg"></a>
+    </li>
+    <li>
+      <a name="colorspace"></a>
     </li>
     <li>
       <a name="colorspace-pkg"></a>
@@ -727,6 +744,12 @@ colourSwatches(rgb(unique(coords(NgaTae$colours))), colourList=NgaTae, tolerance
     </li>
     <li>
       <a name="rcolorbrewer-pkg"></a>
+    </li>
+    <li>
+      <a name="cieluv"></a>
+    </li>
+    <li>
+      <a name="srgb"></a>
     </li>
   </ul>
 
