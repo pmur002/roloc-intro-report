@@ -16,7 +16,7 @@ TARFILE = ../roloc-deposit-$(shell date +'%Y-%m-%d').tar.gz
 	Rscript -e 'library(knitr); knit("$<")'
 
 docker:
-	sudo docker run -v $(shell pwd):/home/work/ -w /home/work --rm pmur002/roloc make roloc.html
+	sudo docker run -v $(shell pwd):/home/work/ -w /home/work --rm pmur002/roloc-intro make roloc.html
 
 web:
 	make docker

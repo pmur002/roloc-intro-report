@@ -74,20 +74,23 @@ options(width=100)
   </p>
 -->
   <p>
-    This report introduces the 'roloc' package for R.
+    This report introduces the 'roloc' package for R, which
+    provides functions for converting colour specifications
+    into colour names. 
   </p>
 
   <toc/>
 
   <h2><a name="intro">Introduction</a></h2>
   <p>
-    The 'BrailleR' package (CITE) provides a function, <code>VI</code>,
+    The 'BrailleR' package (<a href="#brailler-pkg"/>)
+    includes a function called <code>VI</code>
     that can generate text descriptions of (some) plots produced by R.  
-    These text descrptions, combined with a screen reader,
+    These text descriptions, combined with a screen reader,
     provide some information
     for visually-impaired R users about an R plot.  
     An example is
-    provided below for a scatterplot produced with 'ggplot2'.
+    given below for a scatterplot produced with 'ggplot2'.
     We  first generate a very small data set so that we can show
     information about every data point without taking too much space.
   </p>
@@ -171,7 +174,8 @@ gsub(colspec, colourName(colspec[1]), result$text[9])
   </rcode>
 
   <p>
-    This conversion involves several different issues:
+    The conversion from colour specification to colour name
+    involves several different issues:
   </p>
   <ul>
     <li>
@@ -318,10 +322,12 @@ colourName("#F0F8FF")
   </rcode>
   <p>
     That list of colour names is based on a semi-standard set of
-    "X11 colour names" (CITE),
-    which is also used in SVG (CITE) and CSS3 (CITE).
+    "X11" colour names (<a href="#color-dictionaries"/>),
+    which is also used in SVG (<a href="#SVG-colors"/>) 
+    and CSS3 (<a href="#CSS-colors"/>).
     A much smaller standard set of colour names is the 
-    "HTML colour names" (CITE), which only contains 16 names.
+    "HTML" colour names (<a href="#HTML-colors"/>), 
+    which only contains 16 names.
     This set can be used by specifying the <code>colourList</code>
     argument to the <code>colourName</code> function.
     The code below shows that, for the same colour specification, 
@@ -332,13 +338,12 @@ colourName("#00FF00")
 colourName("#00FF00", colourList=HTMLcolours)
   </rcode>
   <p>
-    It is also possible to specify a custom list of colour names,
+    It is also possible to create a custom list of colour names
     with the <code>colourList</code> function.  This function
     takes two arguments:  a character vector of colour names;
     and an "sRGB" colour object as produced by 
-    functions in the 'colorspace' package.  
-  </p>
-  <p>
+    functions in the 'colorspace' package (with one sRGB colour
+    specification per colour name).  
     The following code
     provides a simple example, where the colour list is a set of 
     colour names that correspond to colours that only differ in terms
@@ -377,17 +382,14 @@ colourName(c("#00FF00", "#00BFC4", "#F0F8FF"), colourList=shades)
     In order to decide a closest colour we need to define a colour metric;
     a function that can be used to calculate the distance between two
     colours.  The default colour metric measures euclidean distance in the CIE
-    LUV colour space.  
-  </p>
-  <p>
-    Several other colour metrics are provided and can be specified
-    in a call to <code>colourName</code> via the <code>colourMetric</code>
-    argument.  For example, the
+    LUV colour space, but we can select a different metric via the
+    <code>colourMetric</code> argument to <code>colourName</code>.  
+    For example, the
     <code>euclideanRGB</code> metric measures euclidean distance between
     colours within the sRGB colour space.  If we use this colour metric,
     instead of the default <code>euclideanLUV</code> (keeping
     the list of colour names constant), 
-    we can get 
+    we will sometimes get 
     a different result from the same colour specification.
   </p>
   <rcode>
@@ -396,15 +398,9 @@ colourName("#F12300", colourMetric=euclideanRGB)
   </rcode>
 
   <p>
-    Another example of a different colour metric 
-    is dE 2000, which uses CIE Lab plus a distance metric that weights 
-    differences in the ab plane more heavily than differences in the
-    L dimension (?) (TODO)
-  </p>
-  <p>
-    It is also possible to define a custom colour metric, via the
+    We can also provide our own function as the
     <code>colourMetric</code> argument to the <code>colourName</code>
-    function.  This argument must be a function that takes two
+    function.  This function must take two
     arguments, both of which are "sRGB" objects:
     <code>colour</code> is the colour specification that we want to find
     a match for and <code>colourList</code> is the list of colours 
@@ -412,8 +408,6 @@ colourName("#F12300", colourMetric=euclideanRGB)
     The function must return a matrix of distances with one row
     for each colour specification and one column for each
     colour in the colour list.
-  </p>
-  <p>
     The function may return <code>NA</code>, which means the colour
     could not be represented in the colour space used by the colour metric,
     and the function may return <code>Inf</code>, which means that
@@ -430,14 +424,14 @@ lightnessDistance <- function(colour, colourList) {
     abs(colour["L"] - colourList[, "L"])
 }
 
-lightnessLUV <- function(colour, colourList) {
+lightnessLUV <- function(colour, colourList, ...) {
     ## Convert 'colour' to 'Luv'
     specColour <- as(colour, "LUV")
     ## Convert 'colourList' to 'Luv'
-    listColours <- as(colourList, "LUV")
+    listColour <- as(colourList, "LUV")
     ## Calculate distances
     specCoords <- coords(specColour)
-    listCoords <- coords(listColours)
+    listCoords <- coords(listColour)
     t(apply(specCoords, 1, lightnessDistance, listCoords))
 }
   </rcode>
@@ -455,12 +449,16 @@ colourName(c("#00FF00", "#00BFC4", "#F0F8FF"),
   <p>
     Any additional arguments that are supplied to 
     <code>colourName</code> are passed on to 
-    the colour metric function.  For example, the default
+    the colour metric function 
+    (so the metric function should also have an ellipsis argument, as 
+    demonstrated above).  
+    For example, the default
     <code>euclideanLUV</code> colour metric accepts a <code>tolerance</code>
     argument.  If the distance between a colour specification and 
     the nearest colour name on the colour list is greater than the 
-    tolerance then the index 0 is returned.  For example,
-    the code below first returns nearest matches, then specifies 
+    tolerance then the distance <code>Inf</code> is returned for that
+    comparison.  In 
+    the code below, we first returns nearest matches, then we specify
     a tolerance of zero so that 
     only exact colour matches are returned (based on the
     HTML colour list).
@@ -491,8 +489,10 @@ colourNames(c("#00FF00", "#00BFC4", "#F0F8FF"),
 
   <h2><a name="plots">Visualising colour names</a></h2>
   <p>
-    The 'roloc' package provides a <code>colourSwatch</code> function, which
-    draws the colour specification 
+    The 'roloc' package also 
+    provides a <code>colourSwatch</code> function, which
+    produces a visual representation of a colour conversion.
+    This consists of the colour specification 
     to be matched, and a small rectangle of that colour,
     alongside the matched colour name, and a small rectangle of that colour.
   </p>
@@ -506,7 +506,8 @@ colourSwatch(c("#00FF00", "#00BFC4", "#F0F8FF"),
   </rcode>
 
   <p>
-    The <code>colourSwatches</code> function shows more than one match.
+    The <code>colourSwatches</code> function is similar,
+    but it can show more than one match per colour specification.
   </p>
   <rcode fig.height="1.5" message="FALSE">
 colourSwatches(c("#00FF00", "#00BFC4", "#F0F8FF"), 
@@ -517,9 +518,13 @@ colourSwatches(c("#00FF00", "#00BFC4", "#F0F8FF"),
 
   <h2><a name="detail">Under the hood</a></h2>
   <p>
-    The lower-level <code>colourMatch</code> function generates
+    Underlying both <code>colourName</code> and 
+    <code>colourSwatch</code> functions is a
+    lower-level <code>colourMatch</code> function.  This generates
     a "colourMatch" object, which contains all of the information
-    about the comparison of test colour with the colour list.
+    about the comparison of colour specifications with the colour list
+    and may provide a basis for further calculations on the colour comparison
+    or for other visualisations of the comparison.
   </p>
   <rcode>
 colourMatch(c("#00FF00", "#00BFC4", "#F0F8FF"),
@@ -545,62 +550,60 @@ colourSwatch("#F8766D")
     inscrutable (e.g., "aliceblue" or "lemonchiffon").  Use of
     a different (simpler) colour list might provide a translation
     of these more exotic names into more familiar terminology.
-    The <code>simpleColours</code> list is one of my own construction,
-    made by evenly descriptive labels throughout CIE Luv space.
+    For example, 'roloc' contains 
+    a <code>simpleColours</code> list with 
+    descriptive labels spread evenly throughout CIE Luv space.
   </p>
-  <rcode>
+  <rcode fig.height=".5" message="FALSE">
 colourName(c("aliceblue", "lemonchiffon"), colourList=simpleColours)
+colourSwatch(c("aliceblue", "lemonchiffon"), colourList=simpleColours)
   </rcode>
   <p>
-    A small assistance for 'BrailleR' ?
-    Any use for colour-blind users ? (Find out what colour really is rather
-    than what it looks like ?)
-    Set things up to allow easy translations (e.g., Maori colours) ?
-    Coordinate with colour set functions, like colorRamp() ?
-    (e.g., want to convert a series of blues that only differ in terms
-    of lightness to a set of "very light blue" to "very dark blue" ?)
+    The 'roloc' package makes it easy to add further colour lists
+    and colour metrics.  For example, it should be easy to create 
+    a colour list based on the XKCD colour survey 
+    <a href="#XKCD-colors"/>.
   </p>
   <p>
-    (TODO) Set up a rainbow-hue, dark/light, bright/dull colour list
-    That might actually be far more useful than the default Rcolours list.
+    One possible use of this flexibility is to provide non-english
+    colour lists.
+    For example, the 'roloc' package contains a 
+    <code>NgaTae</code> colour list with some basic Maori colour names.
   </p>
-  <p>
-    ColourBrewer colour lists ? "wes anderson" colour Lists ?
-    Munsell colour list !
-  </p>
-  <p>
-    Also demo an xkcd colour names list ?
-  </p>
+  <rcode fig.height="5" message="FALSE">
+colourSwatches(rgb(unique(coords(NgaTae$colours))), colourList=NgaTae, tolerance=0)
+  </rcode>
 
   <h2><a name="related">Related work</a></h2>
   <p>
-    There are many R packages that deal with colour, but none to my
-    knowledge that deals directly with the problem of converting colour
+    There are many R packages that deal with colour, but none were found 
+    that deal directly with the problem of converting colour
     specifications to colour names.
-    The 'roloc' package builds on the 
-    'colorspace' package 
-    for representing colour specifications in different colour spaces
-    and transforming between colour spaces.
     Numerous packages provide functions
     for generating colour palettes, for example,
-    'RColorBrewer' and 'pals'.
-    The 'colorscience' package contains a large number of colour resources
+    'RColorBrewer' (<a href="#rcolorbrewer-pkg"/>) and 
+    'pals' (<a href="#pals-pkg"/>), and
+    the 'colorscience' package (<a href="#colorscience-pkg"/>)
+    contains a large number of colour resources
     including colour space conversions, and colour metrics.
+    The 'roloc' package builds on the 
+    'colorspace' package (<a href="#colorspace-pkg"/>)
+    for representing colour specifications in different colour spaces
+    and transforming between colour spaces.
   </p>
   <p>
     Outside of R, there are a number of web sites that provide
     conversions from colour specifications to colour names, for example,
-    http://shallowsky.com/colormatch/index.php,
-    which includes links to its PHP source code
-    http://shallowsky.com/colormatch/colormatch.php.txt
-
+    <a href="http://shallowsky.com/colormatch/index.php">http://shallowsky.com/colormatch/index.php</a>,
+    which includes links to its 
+    <a href="http://shallowsky.com/colormatch/colormatch.php.txt">PHP source code</a>.
     There are also standalone programs like 
-    https://www.codeproject.com/Articles/243610/The-Known-Colors-Palette-Tool-Revised
+    <a href="https://www.codeproject.com/Articles/243610/The-Known-Colors-Palette-Tool-Revised">The Known Colors Palette Tool</a>
     and there are numerous mobile phone apps, such as
-    Color Grab (loomatix),
-    ColourMatch (Resene),
-    and Color ID (GreenGar).
-
+    <a href="https://play.google.com/store/apps/details?id=com.loomatix.colorgrab&amp;hl=en">Color Grab</a> (Loomatix),
+    <a href="https://play.google.com/store/apps/details?id=nz.co.resene.android.colourmatch&amp;hl=en">ColourMatch</a> (Resene),
+    and 
+    <a href="https://play.google.com/store/apps/details?id=greengar.color.identifier&amp;hl=en">Color ID</a> (GreenGar).
     However, all of these lack the flexibility and/or programmability
     of a general software package and, of course, cannot be easily used
     from R.
@@ -628,8 +631,10 @@ colourName(c("aliceblue", "lemonchiffon"), colourList=simpleColours)
   <h2><a name="summary">Summary</a></h2>
   <p>
     The 'roloc' package provides tools for converting colour specifications
-    to colour names.  The main function is <code>colourName</code> and
-    it allows the user to select a list of colour names to match against
+    to colour names.  The main function is <code>colourName</code>, which 
+    accepts any R colour specification and returns a character vector
+    of colour names.  The user can
+    select a list of colour names to match against
     and a metric function to determine the closest colour.
   </p>
 
@@ -637,7 +642,7 @@ colourName(c("aliceblue", "lemonchiffon"), colourList=simpleColours)
   <p>
     The examples and discussion in this document relate to <a
     href="https://github.com/pmur002/roloc/releases/tag/v0.1">version
-    0.1</a> of the 'roloc' package; version 0.27 of the 
+    0.1</a> of the 'roloc' package and version 0.27 of the 
     <a href="https://github.com/ajrgrodfrey/BrailleR/">BrailleR</a>
     package.
   </p>
@@ -649,10 +654,6 @@ colourName(c("aliceblue", "lemonchiffon"), colourList=simpleColours)
   <h2><a name="Resources">Resources</a></h2>
   <ul>
     <li>
-      All materials required to (re)create this document are available
-      on <a href="https://github.com/pmur002/roloc-intro-report/releases/tag/v1">github</a>.
-    </li>
-    <li>
       The <a href="roloc.cml">raw source file</a> for this
       report, a <a href="roloc.xml">valid XML</a>
       transformation of the source file, a <a
@@ -662,13 +663,15 @@ colourName(c("aliceblue", "lemonchiffon"), colourList=simpleColours)
       the 'knitr' document, and a <a href="Makefile">Makefile</a> that
       contains code for the other transformations and coordinates
       everything.  
+      These materials are also available
+      on <a href="https://github.com/pmur002/roloc-intro-report/releases/tag/v1">github</a>.
     </li>
     <li>
       This report was generated within a 
       <a href="https://www.docker.com/">Docker</a> container.
       The Docker command to build the report is included in the Makefile above.
       The Docker image for the container is available from
-      <a href="https://hub.docker.com/r/pmur002/roloc/">Docker Hub</a>;
+      <a href="https://hub.docker.com/r/pmur002/roloc-intro/">Docker Hub</a>;
       alternatively, the image can be rebuilt from its 
       <a href="Dockerfile">Dockerfile</a>.
     </li>
@@ -685,8 +688,8 @@ colourName(c("aliceblue", "lemonchiffon"), colourList=simpleColours)
 
   <h2>How to cite this document</h2>
   <p>
-    Murrell, P. (2017). "Generating Colour Names: The 'roloc' Package for R." 
-    Technical Report 2017-??, University of Auckland. 
+    Murrell, P. (2018). "Generating Colour Names: The 'roloc' Package for R." 
+    Technical Report 2018-??, University of Auckland. 
     [ <a href="how-to-cite.bib">bib</a> ] 
   </p>
 
@@ -694,6 +697,36 @@ colourName(c("aliceblue", "lemonchiffon"), colourList=simpleColours)
   <ul style="list-style-type: none">
     <li>
       <a name="roloc-pkg"></a>
+    </li>
+    <li>
+      <a name="brailler-pkg"></a>
+    </li>
+    <li>
+      <a name="color-dictionaries"></a>
+    </li>
+    <li>
+      <a name="X11-colors"></a>
+    </li>
+    <li>
+      <a name="SVG-colors"></a>
+    </li>
+    <li>
+      <a name="CSS-colors"></a>
+    </li>
+    <li>
+      <a name="HTML-colors"></a>
+    </li>
+    <li>
+      <a name="pals-pkg"></a>
+    </li>
+    <li>
+      <a name="colorspace-pkg"></a>
+    </li>
+    <li>
+      <a name="colorscience-pkg"></a>
+    </li>
+    <li>
+      <a name="rcolorbrewer-pkg"></a>
     </li>
   </ul>
 
