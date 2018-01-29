@@ -16,6 +16,12 @@
       font-size: smaller;
       margin: 0;
     }
+    p.versionHistory {
+      color: gray
+    }
+    p.versionHistory a {
+      color: gray
+    }
     p.ref {
       text-indent: -2em;
       padding-left: 2em;
@@ -34,10 +40,17 @@
       </span>
     </p>
     <p class="date">
-    Version 1:
+    Version 2:
     <!--begin.rcode echo=FALSE, results="asis"
 cat(format(Sys.Date(), "%A %d %B %Y"))
     end.rcode-->
+  </p>
+    <p class="date versionHistory">
+    Version 1:  original publication<br>
+    Version 2:  added reference to a
+    <a href="http://r.789695.n4.nabble.com/measuring-distances-between-colours-td4668278.html">discussion on the R-help mailing list</a> 
+    in the <a href="#related">Related work</a> section.  Thanks to Kevin Wright
+    for pointing out this omission.
   </p>
     <!--begin.rcode init, echo=FALSE, message=FALSE, results="hide"
 opts_chunk$set(comment=" ", tidy=FALSE)
@@ -613,6 +626,16 @@ colourSwatches(rgb(unique(coords(NgaTae$colours))), colourList=NgaTae, tolerance
       <a name="related">8. Related work</a>
     </h2>
     <p>
+    A <a href="http://r.789695.n4.nabble.com/measuring-distances-between-colours-td4668278.html">discussion on the R-help mailing list</a> from 2013
+    about "measuring distances between colours?" includes a function
+    <code>rgb2col</code> by Kevin Wright, which works very much like the
+    default settings for the <code>colourName</code> function (it matches
+    R colour names using euclidean distance in CIE LUV space).
+    The 'roloc' package was developed in (shameful) ignorance of this
+    discussion, but provides greater flexibility by allowing
+    different colour lists and different colour metrics to be specified.
+  </p>
+    <p>
     There are many R packages that deal with colour, but none were found 
     that deal directly with the problem of converting colour
     specifications to colour names.
@@ -705,7 +728,7 @@ colourSwatches(rgb(unique(coords(NgaTae$colours))), colourList=NgaTae, tolerance
       contains code for the other transformations and coordinates
       everything.  
       These materials are also available
-      on <a href="https://github.com/pmur002/roloc-intro-report/releases/tag/v1">github</a>.
+      on <a href="https://github.com/pmur002/roloc-intro-report/releases/tag/v2">github</a>.
     </li>
       <li>
       This report was generated within a 
